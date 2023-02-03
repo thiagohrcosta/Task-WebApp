@@ -1,5 +1,6 @@
-import { Box, Button, Container, Text } from "@chakra-ui/react";
+import { Box, Button, Container, SimpleGrid, Text } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
+import { TaskCompleted } from "../../components/taskCompleted";
 import { Tasks } from "../../components/tasks";
 import { api } from "../../services/api";
 import { theme } from "../../styles/theme";
@@ -51,19 +52,66 @@ export function Home() {
             Add new task
           </Button>
         </Box>
-        <Box>
-          {tasks && tasks.map((task) => {
-            return (
-              <Tasks 
-                key={task.id}
-                id={task.id}
-                title={task.title}
-                description={task.description}
-                completedAt={task.completed_at}
-                updatedAt={task.updated_at}
-              />
-            )
-          })}
+        <Box
+          display="flex"
+          width="100%"
+          gap="20px"
+          marginTop="100px"
+        >
+          <Box
+            width="70%"
+          >
+            <SimpleGrid columns={4} spacing={10}>
+              {tasks && tasks.map((task) => {
+                if (task.completed_at === null) {
+                  return (
+                    <Box>
+                      <Tasks
+                        key={task.id}
+                        id={task.id}
+                        title={task.title}
+                        description={task.description}
+                      />
+                    </Box>
+                  )
+                }
+              })}
+            </SimpleGrid>
+          </Box>
+          <Box
+            width="30%"
+            border={`1px solid ${theme.colors.green500}`}
+            borderRadius="8px"
+            display="flex"
+            flexDirection="column"
+            padding="20px"
+            textAlign="center"
+          >
+            <Text
+              color={theme.colors.green500}
+              fontWeight="bold"
+              fontSize="18px"
+              textTransform="uppercase"
+            >
+              Completed tasks
+            </Text>
+            {tasks && tasks.map((task) => {
+              if (task.completed_at !== null) {
+                return (
+                  <Box
+                    margin="20px 0"
+                  >
+                    <TaskCompleted
+                      key={task.id}
+                      id={task.id}
+                      title={task.title}
+                      completedAt={task.completed_at}
+                    />
+                  </Box>
+                )
+              }
+            })}
+          </Box>
         </Box>
       </Container>
     </Box>
