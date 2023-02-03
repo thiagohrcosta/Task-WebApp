@@ -1,4 +1,5 @@
-import { Box, Text } from "@chakra-ui/react";
+import { Box, Button, Text } from "@chakra-ui/react";
+import { api } from "../../services/api";
 import { theme } from "../../styles/theme";
 
 export function Tasks({
@@ -8,6 +9,21 @@ export function Tasks({
   completedAt,
   updatedAt,  
 }) {
+
+  async function handleMarkAsCompleted(e) {
+    e.preventDefault();
+    await api.patch(`/tasks/${id}/complete`, {
+      // need to fix cors issue
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+      }
+      
+    });
+
+    alert("Task marked as completed!")
+    window.location.reload();
+  }
+
   return (
     <Box
       height="220px"
@@ -18,6 +34,11 @@ export function Tasks({
       flexDirection="column"
       justifyContent="center"
       alignItems="center"
+      cursor="pointer"
+      _hover={{
+        border: `1px solid ${theme.colors.green500}`,
+        transition: 'ease-in-out 0.25s',
+      }}
     > 
       <Text
         color={theme.colors.white}
@@ -33,6 +54,20 @@ export function Tasks({
       >
         {description}
       </Text>
+      <Button
+        marginTop="20px"
+        border={`1px solid ${theme.colors.green500}`}
+        color={theme.colors.green500}
+        background={theme.colors.secondary}
+        _hover={{
+          backgroundColor: theme.colors.green500,
+          color: theme.colors.secondary,
+          transition: 'ease-in-out 0.25s',
+        }}
+        onClick={(e) => handleMarkAsCompleted(e)}
+      >
+        Mark as completed
+      </Button>
     </Box>
   )
 }
