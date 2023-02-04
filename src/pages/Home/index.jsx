@@ -11,8 +11,28 @@ export function Home() {
   const [tasks, setTasks] = useState([]);
   const { isOpen, onOpen, onClose } = useDisclosure()
 
+  const [isSubmitNewTask, setIsSubmitNewTask] = useState(false);
+
   const { register, handleSubmit } = useForm();
-  const onSubmit = data => console.log(data);
+
+
+  async function onSubmitNewTask(data) {
+    //setIsSubmitNewTask(true);
+    const response = await api.post('/tasks', {
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'content-type': 'application/json',
+        'Access-Control-Allow-Methods': 'GET,PUT,POST,DELETE,PATCH,OPTIONS'
+      },
+      title: data.title,
+      description: data.description,      
+    })
+
+    if (response.status === 201) {
+      setIsSubmitNewTask(false);
+      onClose();
+    }
+  }
 
   async function fetchTasks() {
     const response = await api.get('/tasks', {
@@ -85,7 +105,7 @@ export function Home() {
                 <Box
                   padding="20px"
                 >
-                  <form onSubmit={handleSubmit(onSubmit)}>
+                  <form onSubmit={handleSubmit(onSubmitNewTask)}>
                     <Input
                       padding="20px"
                       placeholder="Insert a task title"
@@ -111,6 +131,7 @@ export function Home() {
                         border: `1px solid ${theme.colors.blue500}`,
                         transition: 'ease-in-out 0.25s',
                       }}
+                      isLoading={isSubmitNewTask}
                     >
                       Submit
                     </Button>
