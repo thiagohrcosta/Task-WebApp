@@ -1,12 +1,18 @@
-import { Box, Button, Container, SimpleGrid, Text } from "@chakra-ui/react";
+import { Box, Button, Container, Input, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, SimpleGrid, Text, useDisclosure } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { TaskCompleted } from "../../components/taskCompleted";
 import { Tasks } from "../../components/tasks";
 import { api } from "../../services/api";
 import { theme } from "../../styles/theme";
 
+import { useForm } from "react-hook-form";
+
 export function Home() {
   const [tasks, setTasks] = useState([]);
+  const { isOpen, onOpen, onClose } = useDisclosure()
+
+  const { register, handleSubmit } = useForm();
+  const onSubmit = data => console.log(data);
 
   async function fetchTasks() {
     const response = await api.get('/tasks', {
@@ -40,17 +46,79 @@ export function Home() {
           >
             Tasks WebApp
           </Text>
-          <Button
+
+          <Button 
             backgroundColor={theme.colors.blue500}
             color={theme.colors.white}
             _hover={{
               backgroundColor: theme.colors.primary,
               color: theme.colors.blue500,
               border: `1px solid ${theme.colors.blue500}`,
-            }}
+            }} 
+            onClick={onOpen}
           >
             Add new task
           </Button>
+
+          <Modal isOpen={isOpen} onClose={onClose}>
+            <ModalOverlay />
+            <ModalContent
+              background={theme.colors.primary}
+            >
+              <ModalHeader
+                color={theme.colors.white}
+              >
+                Create a new task
+              </ModalHeader>
+              <ModalCloseButton
+                backgroundColor={theme.colors.red500}
+                color={theme.colors.white}
+                _hover={{
+                  backgroundColor: theme.colors.primary,
+                  color: theme.colors.red500,
+                  border: `1px solid ${theme.colors.red500}`,
+                }}
+              />
+              <ModalBody
+                background={theme.colors.secondary}
+              >
+                <Box
+                  padding="20px"
+                >
+                  <form onSubmit={handleSubmit(onSubmit)}>
+                    <Input
+                      padding="20px"
+                      placeholder="Insert a task title"
+                      color={theme.colors.white}
+                      {...register("title")} 
+                    />
+                    <Input
+                      padding="20px"
+                      margin="20px 0"
+                      placeholder="Insert a task description"
+                      color={theme.colors.white}
+                      {...register("description")}
+                    />
+                    <Button 
+                      background={theme.colors.blue500}
+                      color={theme.colors.white}
+                      width="100%"
+                      margin="20px 0"
+                      type="submit" 
+                      _hover={{
+                        backgroundColor: theme.colors.primary,
+                        color: theme.colors.blue500,
+                        border: `1px solid ${theme.colors.blue500}`,
+                        transition: 'ease-in-out 0.25s',
+                      }}
+                    >
+                      Submit
+                    </Button>
+                  </form>
+                </Box>
+              </ModalBody>
+            </ModalContent>
+          </Modal>
         </Box>
         <Box
           display="flex"
