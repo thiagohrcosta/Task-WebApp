@@ -17,21 +17,27 @@ export function Home() {
 
 
   async function onSubmitNewTask(data) {
-    //setIsSubmitNewTask(true);
-    const response = await api.post('/tasks', {
-      headers: {
-        'Access-Control-Allow-Origin': '*',
-        'content-type': 'application/json',
-        'Access-Control-Allow-Methods': 'GET,PUT,POST,DELETE,PATCH,OPTIONS'
-      },
-      title: data.title,
-      description: data.description,      
-    })
+    setIsSubmitNewTask(true);
 
+    const response = await fetch('http://localhost:3333/tasks', {
+      method: 'POST',
+      header: {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*',
+      },
+      body: JSON.stringify({
+        title: data.title,
+        description: data.description,
+      })
+    })
+    
+    
     if (response.status === 201) {
       setIsSubmitNewTask(false);
       onClose();
     }
+
+    fetchTasks();
   }
 
   async function fetchTasks() {
@@ -117,6 +123,7 @@ export function Home() {
                       margin="20px 0"
                       placeholder="Insert a task description"
                       color={theme.colors.white}
+                      background={theme.colors.secondary}
                       {...register("description")}
                     />
                     <Button 
