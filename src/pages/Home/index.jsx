@@ -182,6 +182,11 @@ export function Home() {
             flexDirection="column"
             padding="20px"
             textAlign="center"
+            // need to add a horizontal scroll to this box
+            // overflow={tasks.length > 3 ? 'scroll' : 'hidden'}
+            overflowY="scroll"
+            overFlowX="hidden"
+            height="65vh"
           >
             <Text
               color={theme.colors.green500}

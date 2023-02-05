@@ -12,13 +12,14 @@ export function Tasks({
 
   async function handleMarkAsCompleted(e) {
     e.preventDefault();
-    await api.patch(`/tasks/${id}/complete`, {
-      // need to fix cors issue
-      headers: {
-        'Access-Control-Allow-Origin': '*',
-      }
-      
-    });
+    
+    const response = await api.patch(`/tasks/${id}`, {
+      header: {
+        "Access-Control-Allow-Headers": "*",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "*",
+      },
+    })
 
     alert("Task marked as completed!")
     window.location.reload();
